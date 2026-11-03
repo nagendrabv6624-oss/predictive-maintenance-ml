@@ -1,0 +1,28 @@
+name: Train predictive-maintenance benchmark
+on:
+  push:
+    branches: [main]
+    paths: ["src/**","requirements.txt",".github/workflows/train.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - name: Train and evaluate on UCI AI4I
+        run: python src/train.py
+      - name: Commit generated benchmark outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f outputs/metrics.json outputs/classification_report.json outputs/holdout_predictions.csv outputs/maintenance_model.joblib outputs/confusion_matrix.png outputs/roc_curve.png outputs/precision_recall_curve.png outputs/feature_importance.png
+          git commit -m "Add trained AI4I benchmark results [skip ci]" || echo "No output changes"
+          git push
