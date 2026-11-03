@@ -1,45 +1,16 @@
-"""Predict machine-failure probability for new AI4I-format rows."""
 from __future__ import annotations
-
 import argparse
 from pathlib import Path
-
-import joblib
-import pandas as pd
-
-ROOT = Path(__file__).resolve().parents[1]
-FEATURES = [
-    "Air temperature [K]", "Process temperature [K]",
-    "Rotational speed [rpm]", "Torque [Nm]", "Tool wear [min]", "Type",
-]
-
-
+import joblib,pandas as pd
+ROOT=Path(__file__).resolve().parents[1]
+FEATURES=["Air temperature [K]","Process temperature [K]","Rotational speed [rpm]","Torque [Nm]","Tool wear [min]","Type"]
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input", required=True, help="CSV containing the six model input columns")
-    parser.add_argument("--output", default="outputs/new_predictions.csv")
-    args = parser.parse_args()
-    model_path = ROOT / "outputs" / "maintenance_model.joblib"
-    if not model_path.exists():
-        raise FileNotFoundError("Run python src/train.py first.")
-    frame = pd.read_csv(args.input)
-    missing = sorted(set(FEATURES) - set(frame.columns))
-    if missing:
-        raise ValueError(f"Missing required columns: {missing}")
-    model = joblib.load(model_path)
-    probability = model.predict_proba(frame[FEATURES])[:, 1]
-    result = pd.DataFrame({
-        "failure_probability": probability,
-        "predicted_failure_at_0_5": (probability >= 0.5).astype(int),
-    })
-    output = Path(args.output)
-    if not output.is_absolute():
-        output = ROOT / output
-    output.parent.mkdir(parents=True, exist_ok=True)
-    result.to_csv(output, index=False)
-    print(result.head())
-    print(f"Saved predictions to {output}")
-
-
-if __name__ == "__main__":
-    main()
+ p=argparse.ArgumentParser();p.add_argument("--input",required=True);p.add_argument("--output",default="outputs/new_predictions.csv");a=p.parse_args()
+ model_path=ROOT/"outputs"/"maintenance_model.joblib"
+ if not model_path.exists():raise FileNotFoundError("Train first with python src/train.py")
+ f=pd.read_csv(a.input);missing=sorted(set(FEATURES)-set(f.columns))
+ if missing:raise ValueError(f"Missing required columns: {missing}")
+ prob=joblib.load(model_path).predict_proba(f[FEATURES])[:,1]
+ out=pd.DataFrame({"failure_probability":prob,"predicted_failure_at_0_5":(prob>=.5).astype(int)})
+ dest=Path(a.output);dest=dest if dest.is_absolute() else ROOT/dest;dest.parent.mkdir(parents=True,exist_ok=True);out.to_csv(dest,index=False);print(out.head())
+if __name__=="__main__":main()
