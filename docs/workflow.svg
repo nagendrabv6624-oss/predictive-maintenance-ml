@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="280" viewBox="0 0 960 280" role="img" aria-labelledby="t d">
+<title id="t">Predictive maintenance machine learning workflow</title><desc id="d">AI4I dataset, validation and preprocessing, model comparison, failure risk output and evaluation.</desc>
+<rect width="960" height="280" fill="#fff"/>
+<text x="32" y="42" font-family="Arial,sans-serif" font-size="24" font-weight="700" fill="#172033">Predictive maintenance workflow</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<g fill="#edf3fa" stroke="#8aa5c7" stroke-width="2">
+<rect x="25" y="100" width="165" height="92" rx="12"/><rect x="220" y="100" width="165" height="92" rx="12"/>
+<rect x="415" y="100" width="165" height="92" rx="12"/><rect x="610" y="100" width="150" height="92" rx="12"/>
+</g>
+<rect x="790" y="100" width="145" height="92" rx="12" fill="#e7f4ef" stroke="#23866d" stroke-width="2"/>
+<g fill="#172033" font-size="16" font-weight="700">
+<text x="107" y="135">AI4I 2020</text><text x="107" y="158">10,000 rows</text>
+<text x="302" y="135">Preprocessing</text><text x="302" y="158">Encode + scale</text>
+<text x="497" y="135">Model comparison</text><text x="497" y="158">Logistic / RF</text>
+<text x="685" y="135">Failure</text><text x="685" y="158">probability</text>
+<text x="862" y="135">Evaluation</text><text x="862" y="158">PR / ROC / F1</text>
+</g>
+<g stroke="#64748b" stroke-width="2.5" fill="none"><path d="M190 146 H215"/><path d="M385 146 H410"/><path d="M580 146 H605"/><path d="M760 146 H785"/></g>
+<g fill="#64748b"><path d="M215 140 L223 146 L215 152 Z"/><path d="M410 140 L418 146 L410 152 Z"/><path d="M605 140 L613 146 L605 152 Z"/><path d="M785 140 L793 146 L785 152 Z"/></g>
+</g>
+<text x="32" y="238" font-family="Arial,sans-serif" font-size="14" fill="#596579">Benchmark workflow only: AI4I 2020 is simulated data, not real factory telemetry.</text>
+</svg>
