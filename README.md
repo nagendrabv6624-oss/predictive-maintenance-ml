@@ -1,77 +1,48 @@
 # Predictive Maintenance Using Machine Learning
 
-A binary classification workflow that estimates machine-failure risk from operating-condition and sensor features.
+A reproducible machine-failure classification project using the **AI4I 2020 Predictive Maintenance Dataset** from UCI.
 
-## Dataset: AI4I 2020
+> **Dataset transparency:** UCI explicitly describes AI4I 2020 as synthetic data designed to reflect industrial predictive-maintenance patterns. It is not real factory telemetry or data from a previous employer. This is an independent benchmark project.
 
-This project uses the **AI4I 2020 Predictive Maintenance Dataset** from the UCI Machine Learning Repository:
-- 10,000 records
-- Sensor inputs: air temperature, process temperature, rotational speed, torque and tool wear
-- Categorical product type: L, M or H
-- Target: `Machine failure` (0/1)
+## Problem
+Estimate machine-failure probability from operating-condition measurements so maintenance teams can prioritize inspection.
 
-**Important data limitation:** UCI explicitly describes AI4I 2020 as a *synthetic dataset designed to reflect predictive-maintenance data*. It is not a collection of real factory sensor records. Therefore, model metrics from this dataset are benchmark results on simulated industrial data, not proof of deployment performance. [UCI dataset documentation](https://archive.ics.uci.edu/dataset/601/ai4i)
+## Dataset
+- 10,000 simulated machine-operation records
+- Air temperature, process temperature, rotational speed, torque and tool wear
+- Product type (categorical)
+- Target: Machine failure (0/1)
+- Source: [UCI AI4I 2020](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset)
+- DOI: [10.24432/C5HS5C](https://doi.org/10.24432/C5HS5C)
+- Licence: CC BY 4.0; cite UCI
 
-Dataset citation: AI4I 2020 Predictive Maintenance Dataset, UCI Machine Learning Repository, DOI: [10.24432/C5HS5C](https://doi.org/10.24432/C5HS5C), CC BY 4.0.
+The training script fetches the dataset using `ucimlrepo` by default. Source data are not copied into this repository.
 
-## Objective
-
-Predict whether a machine failure is recorded for a given operating point. The model uses five numeric sensor variables and product type.
-
-## Leakage prevention
-
-The pipeline intentionally excludes:
-- `UDI` and `Product ID`: identifiers, not operational predictors.
-- `TWF`, `HDF`, `PWF`, `OSF`, `RNF`: component failure-mode labels used to construct the composite `Machine failure` target. Including them would leak target information.
-
-![Predictive maintenance workflow](docs/workflow.svg)
-
-## Methodology
-
-1. Load and validate the official UCI CSV (or a local copy).
+## Method
+1. Validate columns, target labels and missing values.
 2. Stratified 80/20 train/test split.
-3. Median imputation and scaling for numeric columns; one-hot encoding for product type.
-4. Compare Logistic Regression and Random Forest using five-fold stratified cross-validation.
-5. Include a prior-probability dummy baseline.
-6. Select the model by mean cross-validation average precision.
-7. Report precision, recall, F1, ROC-AUC, average precision and confusion matrix on the held-out test set.
-
-Because failures are uncommon, accuracy alone is not an adequate measure. The precision–recall curve and recall are important for understanding missed failures and false alarms.
+3. Preprocess numeric and categorical columns in a scikit-learn pipeline.
+4. Compare Logistic Regression, Random Forest and a prior-probability baseline.
+5. Select the model using five-fold average-precision cross-validation on training data.
+6. Evaluate on the holdout set using precision, recall, F1, ROC-AUC, average precision and confusion matrix.
 
 ## Run
-
-Python 3.10–3.12 is recommended.
-
 ```bash
 pip install -r requirements.txt
 python src/train.py
 ```
+Optional local CSV: `python src/train.py --data path/to/ai4i2020.csv`.
 
-The training script downloads the CSV from the UCI public dataset endpoint by default. To use a local copy:
+Inference: `python src/predict.py --input path/to/new_machine_rows.csv`.
 
-```bash
-python src/train.py --data data/ai4i2020.csv
-```
-
-For inference on new rows with the same six input columns:
-
-```bash
-python src/predict.py --input data/new_machine_readings.csv
-```
+## Results
+GitHub Actions trains on a hosted runner and commits metrics, plots, holdout predictions and the selected fitted model into `outputs/`. Results are valid only after a successful workflow run; inspect `outputs/metrics.json`.
 
 ## Outputs
-
-After training, `outputs/` contains the selected model, metrics JSON, holdout predictions, confusion matrix, precision–recall curve, ROC curve and feature-importance chart (when Random Forest is selected).
-
-No model metrics are pre-filled in this repository: run the pipeline to generate them from the downloaded dataset. This avoids presenting unverified numbers as experimental results.
+- `outputs/metrics.json` — dataset provenance and metrics
+- `outputs/maintenance_model.joblib` — selected fitted pipeline
+- `outputs/holdout_predictions.csv`
+- `outputs/confusion_matrix.png`, `roc_curve.png`, `precision_recall_curve.png`, `feature_importance.png`
 
 ## Limitations
-
-- AI4I is synthetic and cannot establish performance on real machines.
-- The dataset does not provide a true time-series maintenance history for every machine; random stratified validation is a benchmark split, not a deployment simulation.
-- Threshold 0.5 is a default, not a maintenance policy. Thresholds should be selected using operational costs and validated on real, time-ordered plant data.
-- A real deployment needs machine-level and temporal validation, monitoring, calibration, and human review.
-
-## Skills demonstrated
-
-Python, Pandas, scikit-learn pipelines, class imbalance, feature preprocessing, cross-validation, Random Forest, Logistic Regression, classification metrics and data visualization.
+AI4I is simulated; a random split is not future-time or unseen-machine validation. Failure labels are imbalanced. Real deployment needs plant-specific temporal validation, calibrated alert thresholds and a maintenance-cost analysis.
