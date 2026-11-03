@@ -24,6 +24,8 @@ The pipeline intentionally excludes:
 - `UDI` and `Product ID`: identifiers, not operational predictors.
 - `TWF`, `HDF`, `PWF`, `OSF`, `RNF`: component failure-mode labels used to construct the composite `Machine failure` target. Including them would leak target information.
 
+![Predictive maintenance workflow](docs/workflow.svg)
+
 ## Methodology
 
 1. Load and validate the official UCI CSV (or a local copy).
