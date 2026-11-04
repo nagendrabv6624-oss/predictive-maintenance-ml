@@ -1,0 +1,26 @@
+{
+  "dataset_type": "Generated illustrative vibration signals; NOT measured JNU data",
+  "reference_dataset": "https://github.com/ClarkGableWang/JNU-Bearing-Dataset",
+  "samples": 2000,
+  "classes": [
+    "normal",
+    "inner_race",
+    "outer_race",
+    "rolling_element"
+  ],
+  "train_samples": 1500,
+  "test_samples": 500,
+  "random_seed": 42,
+  "models": {
+    "Random Forest": {
+      "accuracy": 0.892,
+      "macro_f1": 0.8924881373393959
+    },
+    "SVM RBF": {
+      "accuracy": 0.808,
+      "macro_f1": 0.8048321757016705
+    }
+  },
+  "selected_model": "Random Forest",
+  "disclaimer": "Simulation-only metrics. Not a JNU dataset result or evidence of industrial performance."
+}
