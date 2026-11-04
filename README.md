@@ -1,48 +1,31 @@
-# Predictive Maintenance Using Machine Learning
+# Predictive Maintenance — Bearing Fault Classification
 
-A reproducible machine-failure classification project using the **AI4I 2020 Predictive Maintenance Dataset** from UCI.
+A presentation-ready bearing fault classification demo with a reproducible signal-simulation pipeline and Random Forest/SVM comparison.
 
-> **Dataset transparency:** UCI explicitly describes AI4I 2020 as synthetic data designed to reflect industrial predictive-maintenance patterns. It is not real factory telemetry or data from a previous employer. This is an independent benchmark project.
+## Dataset reference
+The project is designed around the [JNU Bearing Dataset](https://github.com/ClarkGableWang/JNU-Bearing-Dataset), described as 50 kHz vertical acceleration recordings at 600, 800 and 1,000 RPM. It includes normal, inner-race, outer-race and rolling-element bearing conditions.
 
-## Problem
-Estimate machine-failure probability from operating-condition measurements so maintenance teams can prioritize inspection.
+**Data provenance:** The binary CSV recordings could not be retrieved into the training environment during this build. The included trained demo model and metrics use generated illustrative vibration signals, NOT measured JNU recordings. Do not describe these metrics as JNU benchmark performance or industrial validation.
 
-## Dataset
-- 10,000 simulated machine-operation records
-- Air temperature, process temperature, rotational speed, torque and tool wear
-- Product type (categorical)
-- Target: Machine failure (0/1)
-- Source: [UCI AI4I 2020](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset)
-- DOI: [10.24432/C5HS5C](https://doi.org/10.24432/C5HS5C)
-- Licence: CC BY 4.0; cite UCI
+## Demo workflow
+1. Generate illustrative vibration waveforms for four bearing states.
+2. Extract time-domain statistics and FFT band-energy features.
+3. Train Random Forest and RBF-SVM classifiers.
+4. Compare models on a stratified hold-out split.
+5. Save model, metrics and predictions.
 
-The training script fetches the dataset using `ucimlrepo` by default. Source data are not copied into this repository.
+## Reproduce
+Install requirements, then run:
+    
+    python src/train_demo.py
 
-## Method
-1. Validate columns, target labels and missing values.
-2. Stratified 80/20 train/test split.
-3. Preprocess numeric and categorical columns in a scikit-learn pipeline.
-4. Compare Logistic Regression, Random Forest and a prior-probability baseline.
-5. Select the model using five-fold average-precision cross-validation on training data.
-6. Evaluate on the holdout set using precision, recall, F1, ROC-AUC, average precision and confusion matrix.
+Outputs are written to outputs/. Results are simulation-only and demonstrate the pipeline, not measured performance on JNU data.
 
-## Run
-```bash
-pip install -r requirements.txt
-python src/train.py
-```
-Optional local CSV: `python src/train.py --data path/to/ai4i2020.csv`.
-
-Inference: `python src/predict.py --input path/to/new_machine_rows.csv`.
-
-## Results
-GitHub Actions trains on a hosted runner and commits metrics, plots, holdout predictions and the selected fitted model into `outputs/`. Results are valid only after a successful workflow run; inspect `outputs/metrics.json`.
-
-## Outputs
-- `outputs/metrics.json` — dataset provenance and metrics
-- `outputs/maintenance_model.joblib` — selected fitted pipeline
-- `outputs/holdout_predictions.csv`
-- `outputs/confusion_matrix.png`, `roc_curve.png`, `precision_recall_curve.png`, `feature_importance.png`
+## Next step for real benchmark validation
+Retrieve the CSV recordings from the JNU repository, replace the signal generator with a loader for measured files, split by recording/file to avoid leakage, then retrain and report separate JNU test metrics.
 
 ## Limitations
-AI4I is simulated; a random split is not future-time or unseen-machine validation. Failure labels are imbalanced. Real deployment needs plant-specific temporal validation, calibrated alert thresholds and a maintenance-cost analysis.
+- Synthetic signals are not measured bearing vibration.
+- Frequencies and amplitudes are illustrative, not calibrated fault characteristic frequencies.
+- No remaining-useful-life estimation is performed.
+- This is a presentation/demo classifier, not a safety-critical maintenance system.
